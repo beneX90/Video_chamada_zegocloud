@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import "./App.css"
 
+// Função para gerar um ID aleatório
 function randomID(len) {
   let result = '';
   if (result) return result;
@@ -15,6 +16,7 @@ function randomID(len) {
   return result;
 }
 
+// Função para obter parâmetros de URL
 export function getUrlParams(
   url = window.location.href
 ) {
@@ -22,42 +24,45 @@ export function getUrlParams(
   return new URLSearchParams(urlStr);
 }
 
+// Componente principal da aplicação
 export default function App() {
-      const roomID = getUrlParams().get('roomID') || randomID(5);
-      let myMeeting = async (element) => {
-     // generate Kit Token
-      const appID = 1538815538;
-      const serverSecret = "159342bf7ac813368b55c34d0f04810b";
-      const kitToken =  ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID,  randomID(5),  randomID(5));
+  // Obtém o parâmetro 'roomID' da URL ou gera um ID aleatório
+  const roomID = getUrlParams().get('roomID') || randomID(5);
 
+  // Função assíncrona para configurar e iniciar uma chamada
+  let myMeeting = async (element) => {
+    // Gera um Token para o Kit
+    const appID = 1538815538;
+    const serverSecret = "159342bf7ac813368b55c34d0f04810b";
+    const kitToken =  ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID,  randomID(5),  randomID(5));
 
-     // Create instance object from Kit Token.
-      const zp = ZegoUIKitPrebuilt.create(kitToken);
-      // start the call
-      zp.joinRoom({
-        container: element,
-        sharedLinks: [
-          {
-            name: 'Copy link',
-            url:
-             window.location.protocol + '//' + 
-             window.location.host + window.location.pathname +
-              '?roomID=' +
-              roomID,
-          },
-        ],
-        scenario: {
-          mode: ZegoUIKitPrebuilt.GroupCall, // To implement 1-on-1 calls, modify the parameter here to [ZegoUIKitPrebuilt.OneONoneCall].
+    // Cria uma instância a partir do Token do Kit
+    const zp = ZegoUIKitPrebuilt.create(kitToken);
+
+    // Inicia a chamada
+    zp.joinRoom({
+      container: element,
+      sharedLinks: [
+        {
+          name: 'Copy link',
+          url:
+           window.location.protocol + '//' + 
+           window.location.host + window.location.pathname +
+            '?roomID=' +
+            roomID,
         },
-      });
-
-
+      ],
+      scenario: {
+        mode: ZegoUIKitPrebuilt.GroupCall, // Para chamadas 1-on-1, modifique o parâmetro para [ZegoUIKitPrebuilt.OneONoneCall].
+      },
+    });
   };
 
+  // Renderiza o componente React
   return (
     <div
       className="myCallContainer"
-      ref={myMeeting}
+      ref={myMeeting} // Referência à função para o elemento React
       style={{ width: '100vw', height: '100vh' }}
     ></div>
   );
